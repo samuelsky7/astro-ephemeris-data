@@ -2,38 +2,119 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Ведический астрологический календарь</title>
+  <title>Астрологический календарь "Искусство Осознания"</title>
   <meta name="viewport" content="width=540,user-scalable=no">
   <style>
     body { background: #f7ecda; font-family: 'Segoe UI',sans-serif }
-    .calendar-section { max-width:540px; margin:38px auto; background:#fff7e5; border-radius:18px; box-shadow:0 2px 11px #e6ad6988; padding:34px 23px 28px;}
-    .calendar-header { color:#bc7d45;font-size:1.19em;text-align:center;font-weight:700;margin-bottom:18px;letter-spacing:1px;}
-    label {margin-top:10px; color:#96713f;}
-    #astro-result {margin-top:22px; font-size:1.03em;}
-    .error {color:crimson;font-weight:700;}
+    .calendar-section {
+      max-width:540px; margin:36px auto;
+      background:linear-gradient(180deg,#f7ecda,#fff7e5);
+      border-radius:23px;
+      box-shadow:0 2px 11px #e6ad6988;
+      padding:34px 26px 28px;
+    }
+    .calendar-header {
+      color:#bc7d45; font-size:1.18em; text-align:center; font-weight:700;
+      margin-bottom:20px; letter-spacing:1px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .calendar-header-sub {
+      color:#bc7d45; font-size:1.18em; text-align:center; font-weight:700;
+      margin-top:3px; margin-bottom:24px; letter-spacing:1px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .form-row {
+      display:flex; align-items:center; gap:10px; flex-wrap:nowrap;
+    }
+    .form-row input[type="date"] { min-width:121px; }
+    .form-row input[type="number"] { width:64px; }
+    @media (max-width:580px) {
+      .calendar-section { padding:14px 2vw 18px; max-width:96vw; }
+      .form-row input[type="date"] { min-width:92px; }
+      .form-row input[type="number"] { width:47vw; max-width:93px; }
+    }
+    select, input[type="date"], input[type="number"] { font-size: 1em; }
+    button { cursor:pointer; }
+    .section-title {
+      font-size:1em; color:#bc7d45; margin:27px 0 9px; font-weight:600; letter-spacing:.5px;
+    }
+    .styled-divider {
+      border: none; margin: 22px 0 16px; height: 4px;
+      background: linear-gradient(90deg,#dcb678 10%,#fff7e5 39%,#dcb678 70%);
+    }
+    .author-signature {
+      margin-top:28px; text-align:center; font-size:1em; color:#987856; opacity:.95; letter-spacing:.02em;
+    }
+    .error-message {
+      color: #a85d1f; background: #ffeedf; border: 1px solid #f1c094; border-radius: 8px;
+      padding: 10px; margin: 15px 0 0 0; font-size: 1em; text-align: center; box-shadow: 0 1px 8px #f4c58355;
+    }
   </style>
 </head>
 <body>
 <section class="calendar-section">
-  <div class="calendar-header">Ведический астрологический календарь</div>
-  <label for="date">Дата:</label><br>
-  <input type="date" id="date">
+  <div class="calendar-header">Астрологический календарь</div>
+  <div class="calendar-header-sub">"Искусство Осознания"</div>
+  <label style="color:#ab823d;font-weight:600;display:block;margin-bottom:5px;">Город:</label>
+  <select id="city" style="width:100%;margin-bottom:10px;padding:7px 6px;border-radius:7px;background:#fcf8f2;color:#996633;border:1px solid #e3c99d;">
+    <option value="55.75,37.61,3">Москва</option>
+    <option value="59.93,30.33,3">Санкт-Петербург</option>
+    <option value="47.23,39.72,3">Ростов-на-Дону</option>
+    <option value="61.78,34.35,3">Петрозаводск</option>
+    <option value="68.97,33.09,3">Мурманск</option>
+    <option value="55.04,82.93,7">Новосибирск</option>
+    <option value="55.79,49.12,3">Казань</option>
+    <option value="56.14,47.25,3">Чебоксары</option>
+    <option value="56.33,44.00,3">Нижний Новгород</option>
+    <option value="46.31,44.27,3">Элиста</option>
+    <option value="56.85,60.61,5">Екатеринбург</option>
+    <option value="40.71,-74.01,-4">Лос-Анджелес</option>
+    <option value="43.24,76.95,6">Алматы</option>
+    <option value="48.85,2.35,2">Париж</option>
+    <option value="35.68,139.76,9">Токио</option>
+    <option value="51.51,-0.13,1">Лондон</option>
+    <option value="28.61,77.20,5.5">Дели</option>
+    <option value="41.89,12.51,2">Рим</option>
+    <option value="30.05,31.23,2">Каир</option>
+    <option value="31.45,30.05,2">Мухафаза</option>
+  </select>
+  <label style="color:#ab823d;font-size:1em;font-weight:500;">Дата и время (местная):</label>
+  <div class="form-row" style="margin-bottom:7px;">
+    <input type="date" id="date">
+    <input type="number" id="hour" min="0" max="23">
+    <span>:</span>
+    <input type="number" id="minute" min="0" max="59">
+  </div>
+  <button id="btn-geoloc" style="background:linear-gradient(90deg,#f2deb5,#ffe8b6);border:none;color:#996633;padding:7px 0;border-radius:6px;width:100%;margin-top:4px;font-size:1em;">
+    Автоопределение по местоположению
+  </button>
+  <label style="color:#ab823d;font-size:0.97em;font-weight:500;display:block;margin-top:7px;">Широта/Долгота (можно изменить):</label>
+  <div class="form-row" style="margin-bottom: 2px;">
+    <input type="number" id="latitude" value="55.75" title="Широта" step="0.01">
+    <input type="number" id="longitude" value="37.61" title="Долгота" step="0.01">
+  </div>
+  <input type="hidden" id="timezone" value="3">
 
-  <div id="astro-result"></div>
+  <div id="vedic-result" style="margin-top:22px;"></div>
+  <div id="vedic-activity" style="margin-top:15px;font-size:1.03em;color:#7d6049;"></div>
+  <div id="vedic-extra" style="margin-top:13px;font-size:1.04em;color:#a69d84;"></div>
+  <hr class="styled-divider" id="divider-after-advice"/>
+  <div id="upcoming-events" style="margin-top:19px;font-size:1.01em;color:#6c5d4f;">
+    <div class="section-title">Прочие события</div>
+  </div>
+  <div id="solstices-section"></div>
+  <div id="sun-times" class="sun-times-margin" style="font-size:1.03em;color:#7e5b30;"></div>
+  <div class="author-signature">Автор: Игорь Евгеньевич Руденко</div>
 </section>
 <script>
-// --- ОПИСАНИЕ баз для подгрузки ---
-// Укажи здесь все диапазоны лет и имена файлов в репозитории:
+// ------ Подключение эфемерид с GitHub ------
 const ephemerisFiles = [
   { start: 2025, end: 2029, url: "https://raw.githubusercontent.com/samuelsky7/astro-ephemeris-data/main/ephem_2025_2029.json" },
   { start: 2030, end: 2034, url: "https://raw.githubusercontent.com/samuelsky7/astro-ephemeris-data/main/ephem_2030_2034.json" },
   { start: 2035, end: 2039, url: "https://raw.githubusercontent.com/samuelsky7/astro-ephemeris-data/main/ephem_2035_2039.json" }
-  // Добавь остальные диапазоны при необходимости!
+  // Добавляй новые диапазоны по необходимости!
 ];
-// --- Кэш для ускорения ---
 let ephemerisCache = {};
-
-// --- Получение эфемериды на выбранную дату ---
 async function getEphemerisForDate(dateStr) {
   const year = +dateStr.split('-')[0];
   let fileInfo = ephemerisFiles.find(f => year >= f.start && year <= f.end);
@@ -41,7 +122,7 @@ async function getEphemerisForDate(dateStr) {
   if (!ephemerisCache[fileInfo.url]) {
     try {
       const resp = await fetch(fileInfo.url);
-      if (!resp.ok) throw new Error('Нет такой базы');
+      if (!resp.ok) throw new Error('Cannot fetch base');
       ephemerisCache[fileInfo.url] = await resp.json();
     } catch (e) {
       return null;
@@ -49,49 +130,82 @@ async function getEphemerisForDate(dateStr) {
   }
   return ephemerisCache[fileInfo.url].find(item => item.date === dateStr);
 }
+// ... (оставь все твои функции и массивы как было — не сокращай оригинальный функционал и расчёты!)
+// ... пример: getVedicMonth, getAvestaMonth, getNakshatra, getTithi, getKarana, все расчеты и массивы.
 
-// --- Астрологические расчеты по эфемериде ---
-function getNakshatra(long){
-  const names=["Ашвини","Бхарани","Криттика","Рохини","Мригаширша","Ардра","Пунарвасу","Пушья","Ашлеша","Магха",
-    "Пурва Пхалгуни","Уттара Пхалгуни","Хаста","Читра","Свати","Вишакха","Анурадха","Джештха","Мула","Пурва Ашадха",
-    "Уттара Ашадха","Шравана","Дхаништха","Шатабхиша","Пурва Бхадрапада","Уттара Бхадрапада","Ревати"];
-  let idx=Math.floor(long/13.3333);
-  return names[idx];
+// Инициализация даты:
+function setInitialLocalDate(){
+  let now=new Date();
+  document.getElementById('date').value=now.toISOString().split('T')[0];
+  document.getElementById('hour').value=now.getHours();
+  document.getElementById('minute').value=now.getMinutes();
+  document.getElementById('timezone').value=-now.getTimezoneOffset()/60;
 }
-function getTithi(moon,sun){
-  const names=["Пратхама","Двития","Трития","Чатуртхи","Панчами","Шаштхи","Саптами","Аштами","Навами",
-    "Дашами","Экадаши","Двадаши","Трайодаши","Чатурдаши","Пурнима/Амавасья"];
-  let diff=(moon-sun+360)%360;
-  let idx=Math.floor(diff/12);
-  return names[idx];
+window.onload = function(){
+  setInitialLocalDate();
+  fetch('https://ipapi.co/json/').then(res=>res.json()).then(data=>{
+    let lat = parseFloat(data.latitude).toFixed(2), lon = parseFloat(data.longitude).toFixed(2);
+    let cityOption = Array.from(document.getElementById('city').options)
+      .find(opt=>(parseFloat(opt.value.split(',')[0]).toFixed(1)==lat && parseFloat(opt.value.split(',')[1]).toFixed(1)==lon));
+    if(cityOption){ document.getElementById('city').value = cityOption.value;}
+    document.getElementById('latitude').value=lat;
+    document.getElementById('longitude').value=lon;
+    document.getElementById('timezone').value=data.utc_offset ? +data.utc_offset.replace(':','.').replace('+','') : -now.getTimezoneOffset()/60;
+    calcVedic();
+  }).catch(()=>calcVedic());
 }
-
-// --- Обработка выбора даты ---
-document.getElementById('date').addEventListener('change', async function() {
-  let dateStr=this.value;
-  let $result = document.getElementById('astro-result');
-  if(!dateStr) {$result.innerHTML=''; return;}
-  $result.innerHTML="Загрузка...";
-  let data = await getEphemerisForDate(dateStr);
-  if(!data) {
-    $result.innerHTML = '<span class="error">Нет астрологических данных для этой даты!</span>';
-    return;
-  }
-  let nakshatra = getNakshatra(data.moon_longitude);
-  let tithi = getTithi(data.moon_longitude,data.sun_longitude);
-  $result.innerHTML =
-    `<b>Дата:</b> ${data.date}<br>
-     <b>Солнце:</b> ${data.sun_longitude.toFixed(2)}<br>
-     <b>Луна:</b> ${data.moon_longitude.toFixed(2)}<br>
-     <b>Накшатра:</b> ${nakshatra}<br>
-     <b>Титхи:</b> ${tithi}`;
+document.getElementById('city').addEventListener('change',function(){
+  var coords=this.value.split(',');
+  document.getElementById('latitude').value=coords[0];
+  document.getElementById('longitude').value=coords[1];
+  document.getElementById('timezone').value=coords[2]||'3';
+  calcVedic();
+});
+document.getElementById('btn-geoloc').addEventListener('click',function(){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(pos){
+      document.getElementById('latitude').value=pos.coords.latitude.toFixed(2);
+      document.getElementById('longitude').value=pos.coords.longitude.toFixed(2);
+      let offset=-new Date().getTimezoneOffset()/60;
+      document.getElementById('timezone').value=offset;
+      let lat = document.getElementById('latitude').value, lon = document.getElementById('longitude').value;
+      let cityOption = Array.from(document.getElementById('city').options)
+        .find(opt=>(parseFloat(opt.value.split(',')[0]).toFixed(1)==parseFloat(lat).toFixed(1) && parseFloat(opt.value.split(',')[1]).toFixed(1)==parseFloat(lon).toFixed(1)));
+      if(cityOption){ document.getElementById('city').value = cityOption.value;}
+      calcVedic();
+    },function(){alert('Не удалось получить геолокацию!');});
+  }else{alert('Геолокация не поддерживается браузером.');}
+});
+['date','hour','minute','latitude','longitude'].forEach(id=>{
+  document.getElementById(id).addEventListener('change',calcVedic);
 });
 
-// --- Установить сегодняшнюю дату при загрузке ---
-window.onload = function(){
-  let now = new Date();
-  document.getElementById('date').value = now.toISOString().split('T')[0];
-  document.getElementById('date').dispatchEvent(new Event('change'));
+// --- основной обработчик ---
+async function calcVedic(){
+  let dateVal=document.getElementById('date').value;
+  let hour=parseInt(document.getElementById('hour').value,10);
+  let minute=parseInt(document.getElementById('minute').value,10);
+  let lat=parseFloat(document.getElementById('latitude').value)||55.75;
+  let lon=parseFloat(document.getElementById('longitude').value)||37.61;
+  let tz=parseFloat(document.getElementById('timezone').value)||3;
+  let d=dateVal?new Date(dateVal+'T'+String(hour).padStart(2,'0')+':'+String(minute).padStart(2,'0')+':00'):new Date();
+  let dUTC=new Date(d.getTime()-tz*3600*1000);
+
+  let astroData = await getEphemerisForDate(d.toISOString().split('T')[0]);
+  let jd, sunLong, moonLong;
+  if (astroData) {
+    sunLong = astroData.sun_longitude;
+    moonLong = astroData.moon_longitude;
+  } else {
+    jd = julianDay(dUTC);
+    sunLong = sunLongitude(jd);
+    moonLong = moonLongitude(jd);
+    document.getElementById('vedic-result').innerHTML =
+      `<div class="error-message">Нет готовых астрологических данных по выбранной дате. Выполнен расчет по формулам.</div>`;
+  }
+
+  // ...оставь весь твой функционал ниже — именно как было!
+  // getVedicMonth, getAvestaMonth, расчеты, формирование рекомендций, события, и всё отображение info.
 }
 </script>
 </body>
