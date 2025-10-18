@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Ведический астрологический календарь</title>
+  <meta name="viewport" content="width=540,user-scalable=no">
+  <style>
+    body { background: #f7ecda; font-family: 'Segoe UI',sans-serif }
+    .calendar-section { max-width:540px; margin:38px auto; background:#fff7e5; border-radius:18px; box-shadow:0 2px 11px #e6ad6988; padding:34px 23px 28px;}
+    .calendar-header { color:#bc7d45;font-size:1.19em;text-align:center;font-weight:700;margin-bottom:18px;letter-spacing:1px;}
+    label {margin-top:10px; color:#96713f;}
+    #astro-result {margin-top:22px; font-size:1.03em;}
+    .error {color:crimson;font-weight:700;}
+  </style>
+</head>
+<body>
+<section class="calendar-section">
+  <div class="calendar-header">Ведический астрологический календарь</div>
+  <label for="date">Дата:</label><br>
+  <input type="date" id="date">
+
+  <div id="astro-result"></div>
+</section>
+<script>
+// --- ОПИСАНИЕ баз для подгрузки ---
+// Укажи здесь все диапазоны лет и имена файлов в репозитории:
+const ephemerisFiles = [
+  { start: 2025, end: 2029, url: "https://raw.githubusercontent.com/samuelsky7/astro-ephemeris-data/main/ephem_2025_2029.json" },
+  { start: 2030, end: 2034, url: "https://raw.githubusercontent.com/samuelsky7/astro-ephemeris-data/main/ephem_2030_2034.json" },
+  { start: 2035, end: 2039, url: "https://raw.githubusercontent.com/samuelsky7/astro-ephemeris-data/main/ephem_2035_2039.json" }
+  // Добавь остальные диапазоны при необходимости!
+];
+// --- Кэш для ускорения ---
+let ephemerisCache = {};
+
+// --- Получение эфемериды на выбранную дату ---
+async function getEphemerisForDate(dateStr) {
+  const year = +dateStr.split('-')[0];
+  let fileInfo = ephemerisFiles.find(f => year >= f.start && year <= f.end);
+  if (!fileInfo) return null;
+  if (!ephemerisCache[fileInfo.url]) {
+    try {
+      const resp = await fetch(fileInfo.url);
+      if (!resp.ok) throw new Error('Нет такой базы');
+      ephemerisCache[fileInfo.url] = await resp.json();
+    } catch (e) {
+      return null;
+    }
+  }
+  return ephemerisCache[fileInfo.url].find(item => item.date === dateStr);
+}
+
+// --- Астрологические расчеты по эфемериде ---
+function getNakshatra(long){
+  const names=["Ашвини","Бхарани","Криттика","Рохини","Мригаширша","Ардра","Пунарвасу","Пушья","Ашлеша","Магха",
+    "Пурва Пхалгуни","Уттара Пхалгуни","Хаста","Читра","Свати","Вишакха","Анурадха","Джештха","Мула","Пурва Ашадха",
+    "Уттара Ашадха","Шравана","Дхаништха","Шатабхиша","Пурва Бхадрапада","Уттара Бхадрапада","Ревати"];
+  let idx=Math.floor(long/13.3333);
+  return names[idx];
+}
+function getTithi(moon,sun){
+  const names=["Пратхама","Двития","Трития","Чатуртхи","Панчами","Шаштхи","Саптами","Аштами","Навами",
+    "Дашами","Экадаши","Двадаши","Трайодаши","Чатурдаши","Пурнима/Амавасья"];
+  let diff=(moon-sun+360)%360;
+  let idx=Math.floor(diff/12);
+  return names[idx];
+}
+
+// --- Обработка выбора даты ---
+document.getElementById('date').addEventListener('change', async function() {
+  let dateStr=this.value;
+  let $result = document.getElementById('astro-result');
+  if(!dateStr) {$result.innerHTML=''; return;}
+  $result.innerHTML="Загрузка...";
+  let data = await getEphemerisForDate(dateStr);
+  if(!data) {
+    $result.innerHTML = '<span class="error">Нет астрологических данных для этой даты!</span>';
+    return;
+  }
+  let nakshatra = getNakshatra(data.moon_longitude);
+  let tithi = getTithi(data.moon_longitude,data.sun_longitude);
+  $result.innerHTML =
+    `<b>Дата:</b> ${data.date}<br>
+     <b>Солнце:</b> ${data.sun_longitude.toFixed(2)}<br>
+     <b>Луна:</b> ${data.moon_longitude.toFixed(2)}<br>
+     <b>Накшатра:</b> ${nakshatra}<br>
+     <b>Титхи:</b> ${tithi}`;
+});
+
+// --- Установить сегодняшнюю дату при загрузке ---
+window.onload = function(){
+  let now = new Date();
+  document.getElementById('date').value = now.toISOString().split('T')[0];
+  document.getElementById('date').dispatchEvent(new Event('change'));
+}
+</script>
+</body>
+</html>
